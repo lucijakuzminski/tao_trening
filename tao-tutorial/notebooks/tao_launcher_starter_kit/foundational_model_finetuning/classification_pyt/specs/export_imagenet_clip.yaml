@@ -1,0 +1,37 @@
+encryption_key: tlt_encode
+results_dir: /results/classification_experiment_fm
+wandb:
+  enable: False
+export:
+  results_dir: "${results_dir}/export"
+  gpu_id: 0
+  onnx_file: "${export.results_dir}/classifier.onnx"
+  input_width: 224
+  input_height: 224
+  batch_size: -1
+gen_trt_engine:
+  tensorrt:
+    data_type: "FP32"
+  batch_size: 1
+dataset:
+  dataset: "CLDataset"
+  root_dir: /data/imagenet
+  batch_size: 1
+  workers: 8
+  num_classes: 1000
+  img_size: 224
+  train_dataset:
+    images_dir: /data/imagenet/train
+  val_dataset:
+    images_dir: /data/imagenet/val
+  test_dataset:
+    images_dir: /data/imagenet/val
+model:
+  backbone:
+    type: "vit_l_14_siglip_clipa_224"
+  head:
+    type: "TAOLinearClsHead"
+    binary: False
+    topk: [1, 5]
+    loss:
+      type: CrossEntropyLoss
